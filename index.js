@@ -10,13 +10,10 @@ const usersRouter = require('./routers/users.routes')
 const productsRouter = require('./routers/products.routes')
 
 
-
-// Load environment variables
 dotenv.config()
 
 console.log("puerto", process.env.PORT)
 
-// SERVER initialization
 const app = express()
 
 mongoose.connect( process.env.MONGODB_URL, {
@@ -24,16 +21,12 @@ mongoose.connect( process.env.MONGODB_URL, {
     useUnifiedTopology: true
 })
 
-// MIDDLEWARE
 app.use(express.json())
 
-// ROUTERS
 app.use( usersRouter )
 app.use( productsRouter )
 
-app.use( usuariosRouter )
 
-// ROOT ROUTE
 app.get('/', async(req, res) => {
     let productosEncontrados = []
     try{
@@ -53,7 +46,6 @@ app.get('/', async(req, res) => {
     
 })
 
-// SERVER LISTENING
 app.listen( process.env.PORT , () => {
     console.log('Server is running on port ', process.env.PORT)
 })
