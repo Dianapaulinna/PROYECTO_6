@@ -1,51 +1,60 @@
 
+const express = require("express");
+const cors = require("cors");
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+const path = require("path");
 
-const express = require('express')
-const dotenv = require('dotenv')
-const { MongoClient, ObjectId } = require('mongodb');
-const mongoose = require('mongoose')
+require("dotenv").config();
+const port = process.env.PORT || 3000;
+const serverUrl = process.env.SERVER_URL || `http://localhost:${port}`;
 
+const connectDB = require("./config/db");
 
-const usersRouter = require('./routers/users.routes')
-const productsRouter = require('./routers/products.routes')
+connectDB();
 
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Salad Restaurant API",
+      version: "1.0.0",
+    },
+    servers: [
+      {
+        url: serverUrl,
+      },
+    ],
+    components: {
+      securitySchemes: {
+        ApiKeyAuth: {
+          type: "apiKey",
+          in: "header",
+          name: "x-auth-token",
+        },
+      },
+    },
+  },
+  apis: [`${path.join(__dirname, "./routes/*.js")}`],
+};
 
-dotenv.config()
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-console.log("puerto", process.env.PORT)
+const app = express();
 
-const app = express()
+app.use(cors());
 
-mongoose.connect( process.env.MONGODB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/checkout/create-order") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
-app.use(express.json())
+app.use("/api/checkout", require("./routes/checkout"));
+app.use("/api/salads", require("./routes/salads"));
+app.use("/api/users", require("./routes/users"));
+app.use("/", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-app.use( usersRouter )
-app.use( productsRouter )
-
-
-app.get('/', async(req, res) => {
-    let productosEncontrados = []
-    try{
-        const client = new MongoClient( process.env.MONGODB_URL )
-        const base_proyecto6 = client.db("Proyecto6")
-        const productos = base_proyecto6.collection("productos")
-        const query = productos.find({marca: "Apple"})
-        const listaProductos = await query.toArray()
-        console.log(listaProductos.length, "productos encontrados")
-
-
-    } catch(error) {
-        console.log(error)
-    } finally {
-        res.json({ message: 'Welcome to the express API.', result: productosEncontrados })
-    }
-    
-})
-
-app.listen( process.env.PORT , () => {
-    console.log('Server is running on port ', process.env.PORT)
-})
+app.listen(port, () => console.log(`Servidor corriendo en el puerto ${port}`));
