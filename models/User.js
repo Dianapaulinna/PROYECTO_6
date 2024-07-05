@@ -1,18 +1,47 @@
 
+const mongoose = require("mongoose");
 
-const fs = require('fs')
-const path = require('path')
+const userSchema = mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  lastname: {
+    type: String,
+    default: "",
+  },
+  cart: {
+    type: mongoose.Types.ObjectId,
+    ref: "Cart",
+    default: [],
+  },
+  country: {
+    type: String,
+    default: "",
+  },
+  address: {
+    type: String,
+    default: "",
+  },
+  zipcode: {
+    type: Number,
+    default: 00000,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  receipts: {
+    type: Array,
+    default: [],
+  },
+});
 
-const readUsers = () => {
-   
-    console.log(__dirname) 
-    const fileContent = fs.readFileSync(path.join(__dirname, "users.txt") , 'utf-8')
+const User = mongoose.model("User", userSchema);
 
-    const users = fileContent.split('\n')
-    
-    return users
-}
-
-module.exports = {
-    readUsers
-}
+module.exports = User;

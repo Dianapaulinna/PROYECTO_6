@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 
-const pizzaController = require("../controllers/saladController");
+const saladController = require("../controllers/saladController");
 
 /**
  * @swagger
@@ -85,7 +85,7 @@ router.post("/create", saladController.create);
  *         description: Error al obtener las ensaladas
  */
 
-router.get("/readall", pizzaController.readAll);
+router.get("/readall", saladController.readAll);
 
 /**
  * @swagger
