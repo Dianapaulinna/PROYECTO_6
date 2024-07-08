@@ -51,6 +51,8 @@ const generateSalads = async (salads) => {
       slug,
     }) => {
       // STRIPE
+      console.log(insertSalads);
+
       // A. PRODUCTO
       // CREAR EL PRODUCTO EN STRIPE
       try {
@@ -107,7 +109,7 @@ const generateSalads = async (salads) => {
       }
     };
 
-    insertSalad(e);
+    insertSalads(e);
     return;
   });
 };
