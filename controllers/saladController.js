@@ -7,9 +7,6 @@ exports.create = async (req, res) => {
 
   console.log(req.body);
 
-  // STRIPE
-  // A. PRODUCTO
-  // CREAR EL PRODUCTO EN STRIPE
   try {
     const product = await stripe.products.create({
       name,
@@ -21,9 +18,7 @@ exports.create = async (req, res) => {
       },
     });
 
-    // B. PRECIO
-    // CREAR LOS PRECIOS PARA EL PRODUCTO EN STRIPE
-
+    
     const stripePrices = await Promise.all(
       prices.map(async (e) => {
         return await stripe.prices.create({
